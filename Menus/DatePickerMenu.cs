@@ -4,27 +4,28 @@ using Telegram.Bot.Types.ReplyMarkups;
 
 namespace schedule_bot.Menus;
 
-public class DatePickerMenu(DateTime from, IMediator mediator, IEnumerable<InlineMenu> children) : InlineMenu(mediator, children)
+public class DatePickerMenu : InlineMenu
 {
-    private static readonly InlineKeyboardButton NextPage = new("\u2192");
+    private static readonly InlineKeyboardButton NextPage = new("\u2192") { CallbackData = "next" };
 
-    public DatePickerMenu(DateTime from, IMediator mediator) : this(from, mediator, []) { }
-    /*protected override InlineKeyboardButton[][] Buttons
+    public DatePickerMenu(MenuContext menuContext, IMediator mediator) : base(menuContext, mediator)
     {
-        get
-        {
-            var daysCount = DateTime.DaysInMonth(from.Year, from.Month);
-            var currentDay = from.Day;
-            var buttons = Enumerable.Range(currentDay, daysCount - currentDay)
-                .Select(x => new InlineKeyboardButton($"{x}"))
+        var from = DateTime.Parse(menuContext.Data["from"]);
+        var count = DateTime.DaysInMonth(from.Year, from.Month);
+        var dates = Enumerable.Range(from.Day, count - from.Day).Select(x => $"{x}").ToHashSet();
+
+        Buttons.AddRange(
+            dates
+                .Select(x => new InlineKeyboardButton(x) { CallbackData = x })
                 .Chunk(3)
                 .Append([NextPage])
-                .ToArray();
-            return buttons;
-        }
-    }
-    protected override Dictionary<string, Func<RequestContext, IRequest>> Routes => new()
-    {
+        );
 
-    };*/
+        Route(context =>
+        {
+            ArgumentNullException.ThrowIfNull(context.CallbackQuery?.Data);
+            return dates.Contains(context.CallbackQuery.Data);
+        }, context => new DatePickerCommand(context));
+        Route("back", context => new DatePickerNextPageCommand(context));
+    }
 }

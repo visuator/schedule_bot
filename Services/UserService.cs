@@ -1,14 +1,14 @@
 ﻿using LiteDB;
 using schedule_bot.Entities;
+using schedule_bot.Menus;
 
 namespace schedule_bot.Services;
 
 public record CreateDefaultUser(long UserId, bool IsAdmin);
-public record UpsertUser(long UserId, LastMenu LastMenu);
 public interface IUserRepository
 {
     User GetOrCreateDefault(CreateDefaultUser dto);
-    void Upsert(UpsertUser dto);
+    void ChangeMenu(long userId, IMenu menu);
 }
 public class UserRepository(LiteDatabase db) : IUserRepository
 {
@@ -43,15 +43,14 @@ public class UserRepository(LiteDatabase db) : IUserRepository
         }
     }
 
-    public void Upsert(UpsertUser dto)
+    public void ChangeMenu(long userId, IMenu menu)
     {
         if (!db.BeginTrans())
             throw new Exception();
         lock (_lock)
         {
-            var (userId, lastMenu) = dto;
             var user = _users.FindById(userId);
-            user.LastMenu = lastMenu;
+            user.MenuSnapshot = menu.Save();
             _users.Update(user);
             db.Commit();
         }

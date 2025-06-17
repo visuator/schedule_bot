@@ -13,11 +13,7 @@ public record StartCommand(RequestContext Context) : IRequest
         {
             ArgumentNullException.ThrowIfNull(request.Context.Message);
             var menu = menuProvider.GetStartMenu(request.Context.User);
-            userRepository.Upsert(new(request.Context.User.Id, new()
-            {
-                Data = [],
-                Name = "start_menu"
-            }));
+            userRepository.ChangeMenu(request.Context.User.Id, menu);
             await client.SendMessage(
                 chatId: request.Context.Message.GetUserId(),
                 text: Resources.GreetingMessage,

@@ -6,9 +6,9 @@ public class User
     public bool IsAdmin { get; set; }
     public UserSettings Settings { get; set; } = default!;
     public List<UserTask> Tasks { get; set; } = [];
-    public LastMenu LastMenu { get; set; } = default!;
+    public MenuSnapshot MenuSnapshot { get; set; } = default!;
 }
-public class LastMenu
+public class MenuSnapshot
 {
     public string Name { get; set; } = default!;
     public Dictionary<string, string> Data { get; set; } = [];

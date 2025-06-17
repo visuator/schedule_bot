@@ -4,11 +4,12 @@ using Telegram.Bot.Types.ReplyMarkups;
 
 namespace schedule_bot.Menus;
 
-public class AdminMenu(IMediator mediator, IEnumerable<ReplyMenu> children) : ReplyMenu(mediator, children)
+public class AdminMenu : ReplyMenu
 {
-    public AdminMenu(IMediator mediator) : this(mediator, [])
+    public AdminMenu(MenuContext menuContext, IMediator mediator) : base(menuContext, mediator)
     {
-        Buttons.Add([new KeyboardButton(Resources.AddVacation)]);
-        Routes.Add(Resources.AddVacation, context => new AddVacationCommand(context));
+        AddButtonRow(new KeyboardButton(Resources.AddVacation));
+
+        Route(Resources.AddVacation, context => new AddVacationCommand(context));
     }
 }
