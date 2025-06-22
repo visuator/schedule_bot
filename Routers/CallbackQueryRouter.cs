@@ -1,5 +1,6 @@
 ﻿using schedule_bot.Commands;
 using schedule_bot.Extensions;
+using schedule_bot.Menus;
 using schedule_bot.Services;
 using Telegram.Bot.Types;
 
@@ -9,7 +10,7 @@ public interface ICallbackQueryRouter
 {
     Task HandleCallbackQuery(CallbackQuery callbackQuery);
 }
-public class CallbackQueryRouter(IUserRepository userRepository, MenuProvider menuProvider) : ICallbackQueryRouter
+public class CallbackQueryRouter(IUserRepository userRepository, IMenuRouter menuRouter) : ICallbackQueryRouter
 {
     public Task HandleCallbackQuery(CallbackQuery callbackQuery)
     {
@@ -21,7 +22,6 @@ public class CallbackQueryRouter(IUserRepository userRepository, MenuProvider me
             Message = null,
             CallbackQuery = callbackQuery
         };
-        menuProvider.Restore(user).Route(context);
-        return Task.CompletedTask;
+        return menuRouter.Route(context);
     }
 }

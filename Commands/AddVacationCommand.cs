@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using schedule_bot.Extensions;
+using schedule_bot.Menus;
 using schedule_bot.Services;
 using Telegram.Bot;
 
@@ -7,12 +8,12 @@ namespace schedule_bot.Commands;
 
 public record AddVacationCommand(RequestContext Context) : IRequest
 {
-    public class Handler(ITelegramBotClient client, MenuProvider menuProvider, IUserRepository userRepository) : IRequestHandler<AddVacationCommand>
+    public class Handler(ITelegramBotClient client, IUserRepository userRepository) : IRequestHandler<AddVacationCommand>
     {
         public async Task Handle(AddVacationCommand request, CancellationToken token)
         {
             ArgumentNullException.ThrowIfNull(request.Context.Message);
-            var menu = menuProvider.GetDatePickerMenu(request.Context.Message.Date);
+            var menu = new DatePickerMenu(request.Context.Message.Date);
             userRepository.ChangeMenu(request.Context.User.Id, menu);
             await client.SendMessage(
                 chatId: request.Context.Message.GetUserId(),

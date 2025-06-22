@@ -1,15 +1,21 @@
-﻿using MediatR;
-using schedule_bot.Commands;
-using Telegram.Bot.Types.ReplyMarkups;
+﻿using System.Text.Json.Nodes;
 
 namespace schedule_bot.Menus;
 
 public class AdminMenu : ReplyMenu
 {
-    public AdminMenu(MenuContext menuContext, IMediator mediator) : base(menuContext, mediator)
+    public AdminMenu()
     {
-        AddButtonRow(new KeyboardButton(Resources.AddVacation));
+        AppendRow(Resources.AddVacation);
+    }
 
-        Route(Resources.AddVacation, context => new AddVacationCommand(context));
+    public override string ToJsonString()
+    {
+        var root = new JsonObject()
+        {
+            ["Name"] = Name,
+            ["Buttons"] = SerializeRows()
+        };
+        return root.ToJsonString();
     }
 }

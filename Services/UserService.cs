@@ -50,7 +50,7 @@ public class UserRepository(LiteDatabase db) : IUserRepository
         lock (_lock)
         {
             var user = _users.FindById(userId);
-            user.MenuSnapshot = menu.Save();
+            user.MenuJson = menu.ToJsonString();
             _users.Update(user);
             db.Commit();
         }

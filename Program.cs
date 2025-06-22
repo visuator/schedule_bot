@@ -3,6 +3,7 @@ using LiteDB;
 using Microsoft.Extensions.Options;
 using schedule_bot;
 using schedule_bot.Configuration;
+using schedule_bot.Menus;
 using schedule_bot.Routers;
 using schedule_bot.Services;
 using Telegram.Bot;
@@ -40,7 +41,8 @@ builder.ConfigureServices((context, services) =>
     services.AddScoped<ICommandRouter, CommandRouter>();
     services.AddScoped<IFileHandlerRouter, FileHandlerRouter>();
     services.AddScoped<IUpdateHandler, AppUpdateHandler>();
-    services.AddScoped<MenuProvider>();
+    services.AddSingleton<IMenuDeserializer, MenuDeserializer>();
+    services.AddScoped<IMenuRouter, MenuRouter>();
     services.AddHostedService<PollingService>();
     services.AddHostedService<AdminUsersInitService>();
 });

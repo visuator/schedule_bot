@@ -1,31 +1,44 @@
-﻿using MediatR;
-using schedule_bot.Commands;
+﻿using System.Text.Json.Nodes;
 using Telegram.Bot.Types.ReplyMarkups;
 
 namespace schedule_bot.Menus;
 
 public class DatePickerMenu : InlineMenu
 {
-    private static readonly InlineKeyboardButton NextPage = new("\u2192") { CallbackData = "next" };
-
-    public DatePickerMenu(MenuContext menuContext, IMediator mediator) : base(menuContext, mediator)
+    private readonly DateTime _from;
+    public DatePickerMenu(DateTime from)
     {
-        var from = DateTime.Parse(menuContext.Data["from"]);
-        var count = DateTime.DaysInMonth(from.Year, from.Month);
-        var dates = Enumerable.Range(from.Day, count - from.Day).Select(x => $"{x}").ToHashSet();
+        _from = from;
+        Configure(_from);
+    }
+    public DatePickerMenu(JsonObject json)
+    {
+        _from = json["From"]!.GetValue<DateTime>();
+        Configure(_from);
+    }
 
-        Buttons.AddRange(
-            dates
-                .Select(x => new InlineKeyboardButton(x) { CallbackData = x })
-                .Chunk(3)
-                .Append([NextPage])
+    private void Configure(DateTime from)
+    {
+        var daysCount = DateTime.DaysInMonth(from.Year, from.Month);
+        var remainedDayNumbers = Enumerable.Range(from.Day, daysCount - from.Day)
+            .Select(x => $"{x}")
+            .ToHashSet();
+
+        Rows.AddRange(remainedDayNumbers
+            .Select(x => new InlineKeyboardButton(x) { CallbackData = x })
+            .Chunk(3)
+            .Append([NextPage])
         );
+    }
 
-        Route(context =>
+    public override string ToJsonString()
+    {
+        var root = new JsonObject()
         {
-            ArgumentNullException.ThrowIfNull(context.CallbackQuery?.Data);
-            return dates.Contains(context.CallbackQuery.Data);
-        }, context => new DatePickerCommand(context));
-        Route("back", context => new DatePickerNextPageCommand(context));
+            ["Name"] = Name,
+            ["From"] = _from,
+            ["Buttons"] = SerializeRows()
+        };
+        return root.ToJsonString();
     }
 }
