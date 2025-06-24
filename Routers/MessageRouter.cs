@@ -14,8 +14,7 @@ public class MessageRouter(
     ICommandRouter commandRouter,
     IFileHandlerRouter fileHandlerRouter,
     IUserRepository userRepository,
-    MenuFactory factory,
-    MenuRouter router
+    MenuService service
     ) : IMessageRouter
 {
     public Task HandleMessage(Message message)
@@ -35,6 +34,6 @@ public class MessageRouter(
         {
             return fileHandlerRouter.HandleFile(context);
         }
-        return router.Route(factory.Restore(user.Snapshots), context);
+        return service.Route(context);
     }
 }

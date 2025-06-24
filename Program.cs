@@ -42,7 +42,7 @@ builder.ConfigureServices((context, services) =>
     services.AddScoped<IFileHandlerRouter, FileHandlerRouter>();
     services.AddScoped<IUpdateHandler, AppUpdateHandler>();
     services.AddScoped<MenuFactory>();
-    services.AddScoped<MenuRouter>();
+    services.AddScoped<MenuService>();
     services.AddHostedService<PollingService>();
     services.AddHostedService<AdminUsersInitService>();
 });

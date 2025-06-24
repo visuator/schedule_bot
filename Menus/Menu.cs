@@ -2,20 +2,52 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
+using LiteDB;
 using MediatR;
 using schedule_bot.Commands;
+using schedule_bot.Entities;
 using Telegram.Bot.Types.ReplyMarkups;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace schedule_bot.Menus;
 
-public class MenuRouter(IMediator mediator)
+public class MenuService(IMediator mediator, LiteDatabase db, MenuFactory factory)
 {
-    public async Task Route(IMenu[] menus, RequestContext context)
+    private readonly Lock _lock = new();
+    private readonly ILiteCollection<User> _users = db.GetCollection<User>();
+    public async Task Route(RequestContext context)
     {
+        var menus = factory.Restore(context.User.Snapshots);
         foreach (var menu in menus)
         {
             if (await menu.TryRoute(mediator, context))
                 return;
+        }
+    }
+    public void Update(long userId, IMenu menu)
+    {
+        if (!db.BeginTrans())
+            throw new Exception();
+        lock (_lock)
+        {
+            try
+            {
+                var user = _users.FindById(userId);
+                //todo: refactor this
+                var snapshots = JsonSerializer.Deserialize<List<MenuSnapshot>>(user.MenuJson, MenuSnapshot.JsonSerializerOptions);
+                ArgumentNullException.ThrowIfNull(snapshots);
+                var dto = menu.CreateSnapshot();
+                snapshots.RemoveAll(x => x.TypeName == dto.TypeName);
+                snapshots.Add(dto);
+                user.MenuJson = JsonSerializer.Serialize(snapshots, MenuSnapshot.JsonSerializerOptions);
+                _users.Update(user);
+                db.Commit();
+            }
+            catch
+            {
+                db.Rollback();
+                throw;
+            }
         }
     }
 }
