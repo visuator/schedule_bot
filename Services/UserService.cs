@@ -1,6 +1,9 @@
-﻿using LiteDB;
+﻿using System.Text.Json;
+using System.Text.Json.Serialization;
+using LiteDB;
 using schedule_bot.Entities;
 using schedule_bot.Menus;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace schedule_bot.Services;
 
@@ -21,25 +24,34 @@ public class UserRepository(LiteDatabase db) : IUserRepository
             throw new Exception();
         lock (_lock)
         {
-            var (userId, isAdmin) = dto;
-            var user = _users.FindById(userId);
-            if (user is null)
+            try
             {
-                user = new User()
+                var (userId, isAdmin) = dto;
+                var user = _users.FindById(userId);
+                if (user is null)
                 {
-                    IsAdmin = isAdmin,
-                    Id = userId,
-                    Settings = new()
+                    user = new User()
                     {
-                        BeginningEnabled = true,
-                        DeadlineEnabled = true
-                    },
-                    Tasks = []
-                };
-                _users.Insert(user);
+                        IsAdmin = isAdmin,
+                        Id = userId,
+                        Settings = new()
+                        {
+                            BeginningEnabled = true,
+                            DeadlineEnabled = true
+                        },
+                        Tasks = [],
+                        MenuJson = "[]"
+                    };
+                    _users.Insert(user);
+                }
+                db.Commit();
+                return user;
             }
-            db.Commit();
-            return user;
+            catch
+            {
+                db.Rollback();
+                throw;
+            }
         }
     }
 
@@ -49,10 +61,24 @@ public class UserRepository(LiteDatabase db) : IUserRepository
             throw new Exception();
         lock (_lock)
         {
-            var user = _users.FindById(userId);
-            user.MenuJson = menu.ToJsonString();
-            _users.Update(user);
-            db.Commit();
+            try
+            {
+                var user = _users.FindById(userId);
+                //todo: refactor this
+                var snapshots = JsonSerializer.Deserialize<List<MenuSnapshot>>(user.MenuJson, MenuSnapshot.JsonSerializerOptions);
+                ArgumentNullException.ThrowIfNull(snapshots);
+                var dto = menu.CreateSnapshot();
+                snapshots.RemoveAll(x => x.TypeName == dto.TypeName);
+                snapshots.Add(dto);
+                user.MenuJson = JsonSerializer.Serialize(snapshots, MenuSnapshot.JsonSerializerOptions);
+                _users.Update(user);
+                db.Commit();
+            }
+            catch
+            {
+                db.Rollback();
+                throw;
+            }
         }
     }
 }

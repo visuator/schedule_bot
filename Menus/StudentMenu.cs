@@ -1,22 +1,13 @@
-﻿using System.Text.Json.Nodes;
+﻿namespace schedule_bot.Menus;
 
-namespace schedule_bot.Menus;
-
+public class StudentMenuSnapshot : MenuSnapshot { }
 public class StudentMenu : ReplyMenu
 {
     public StudentMenu()
     {
-        AppendRow(Resources.TodayScheduling, Resources.TomorrowScheduling, Resources.FullScheduling);
-        AppendRow(Resources.ShowList, Resources.AddTask, Resources.UpdateTaskStatus);
+        Append(Resources.TodayScheduling, Resources.TomorrowScheduling, Resources.FullScheduling);
+        Append(Resources.ShowList, Resources.AddTask, Resources.UpdateTaskStatus);
     }
-
-    public override string ToJsonString()
-    {
-        var root = new JsonObject()
-        {
-            ["Name"] = Name,
-            ["Buttons"] = SerializeRows()
-        };
-        return root.ToJsonString();
-    }
+    public StudentMenu(StudentMenuSnapshot snapshot) : this() { }
+    public override MenuSnapshot CreateSnapshot() => new StudentMenuSnapshot();
 }

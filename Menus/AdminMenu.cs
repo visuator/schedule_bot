@@ -1,21 +1,15 @@
-﻿using System.Text.Json.Nodes;
+﻿using schedule_bot.Commands;
 
 namespace schedule_bot.Menus;
 
+public class AdminMenuSnapshot : MenuSnapshot { }
 public class AdminMenu : ReplyMenu
 {
     public AdminMenu()
     {
-        AppendRow(Resources.AddVacation);
+        Append(Resources.AddVacation);
+        Routes["\ud83d\udcc6 Добавить выходные дни"] = context => new AddVacationCommand(context);
     }
-
-    public override string ToJsonString()
-    {
-        var root = new JsonObject()
-        {
-            ["Name"] = Name,
-            ["Buttons"] = SerializeRows()
-        };
-        return root.ToJsonString();
-    }
+    public AdminMenu(AdminMenuSnapshot snapshot) : this() { }
+    public override MenuSnapshot CreateSnapshot() => new AdminMenuSnapshot();
 }

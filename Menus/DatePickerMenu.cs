@@ -1,26 +1,20 @@
-﻿using System.Text.Json.Nodes;
+﻿using schedule_bot.Commands;
 using Telegram.Bot.Types.ReplyMarkups;
 
 namespace schedule_bot.Menus;
 
+public class DatePickerMenuSnapshot : MenuSnapshot
+{
+    public DateTime Date { get; set; }
+}
 public class DatePickerMenu : InlineMenu
 {
-    private readonly DateTime _from;
-    public DatePickerMenu(DateTime from)
+    private readonly DateTime _date;
+    public DatePickerMenu(DateTime date)
     {
-        _from = from;
-        Configure(_from);
-    }
-    public DatePickerMenu(JsonObject json)
-    {
-        _from = json["From"]!.GetValue<DateTime>();
-        Configure(_from);
-    }
-
-    private void Configure(DateTime from)
-    {
-        var daysCount = DateTime.DaysInMonth(from.Year, from.Month);
-        var remainedDayNumbers = Enumerable.Range(from.Day, daysCount - from.Day)
+        _date = date;
+        var daysCount = DateTime.DaysInMonth(_date.Year, _date.Month);
+        var remainedDayNumbers = Enumerable.Range(_date.Day, daysCount - _date.Day)
             .Select(x => $"{x}")
             .ToHashSet();
 
@@ -29,16 +23,8 @@ public class DatePickerMenu : InlineMenu
             .Chunk(3)
             .Append([NextPage])
         );
+        Routes[@"\d+"] = context => new DatePickerCommand(context);
     }
-
-    public override string ToJsonString()
-    {
-        var root = new JsonObject()
-        {
-            ["Name"] = Name,
-            ["From"] = _from,
-            ["Buttons"] = SerializeRows()
-        };
-        return root.ToJsonString();
-    }
+    public DatePickerMenu(DatePickerMenuSnapshot snapshot) : this(snapshot.Date) { }
+    public override MenuSnapshot CreateSnapshot() => new DatePickerMenuSnapshot() { Date = _date };
 }

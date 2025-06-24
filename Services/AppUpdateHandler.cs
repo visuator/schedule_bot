@@ -7,7 +7,7 @@ using Telegram.Bot.Types.Enums;
 
 namespace schedule_bot.Services;
 
-public class AppUpdateHandler(IMessageRouter messageRouter, ICallbackQueryRouter callbackQueryRouter) : IUpdateHandler
+public class AppUpdateHandler(IMessageRouter messageRouter, ICallbackQueryRouter callbackQueryRouter, ILogger<AppUpdateHandler> logger) : IUpdateHandler
 {
     private static void SetCulture(string? languageCode)
     {
@@ -33,5 +33,14 @@ public class AppUpdateHandler(IMessageRouter messageRouter, ICallbackQueryRouter
         return Task.CompletedTask;
     }
 
-    public Task HandleErrorAsync(ITelegramBotClient botClient, Exception exception, HandleErrorSource source, CancellationToken cancellationToken) => Task.CompletedTask;
+    public Task HandleErrorAsync(
+        ITelegramBotClient botClient,
+        Exception exception,
+        HandleErrorSource source,
+        CancellationToken cancellationToken
+        )
+    {
+        logger.LogError(exception, "an error occured");
+        return Task.CompletedTask;
+    }
 }

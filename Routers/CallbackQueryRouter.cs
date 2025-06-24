@@ -10,7 +10,11 @@ public interface ICallbackQueryRouter
 {
     Task HandleCallbackQuery(CallbackQuery callbackQuery);
 }
-public class CallbackQueryRouter(IUserRepository userRepository, IMenuRouter menuRouter) : ICallbackQueryRouter
+public class CallbackQueryRouter(
+    IUserRepository userRepository,
+    MenuFactory factory,
+    MenuRouter router
+    ) : ICallbackQueryRouter
 {
     public Task HandleCallbackQuery(CallbackQuery callbackQuery)
     {
@@ -22,6 +26,6 @@ public class CallbackQueryRouter(IUserRepository userRepository, IMenuRouter men
             Message = null,
             CallbackQuery = callbackQuery
         };
-        return menuRouter.Route(context);
+        return router.Route(factory.Restore(user.Snapshots), context);
     }
 }

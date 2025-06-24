@@ -1,7 +1,6 @@
 ﻿using System.Reflection;
 using LiteDB;
 using Microsoft.Extensions.Options;
-using schedule_bot;
 using schedule_bot.Configuration;
 using schedule_bot.Menus;
 using schedule_bot.Routers;
@@ -12,6 +11,7 @@ using Telegram.Bot.Polling;
 var builder = Host.CreateDefaultBuilder(args);
 builder.ConfigureServices((context, services) =>
 {
+    services.AddLogging();
     services.AddMediatR(x =>
     {
         x.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
@@ -31,7 +31,7 @@ builder.ConfigureServices((context, services) =>
     });
     services.Configure<AdminConfiguration>(context.Configuration.GetSection(nameof(AdminConfiguration)));
     services.Configure<BotConfiguration>(context.Configuration.GetSection(nameof(BotConfiguration)));
-    services.AddSingleton<LiteDatabase>(_ => new LiteDatabase(context.Configuration.GetConnectionString("Database")));
+    services.AddSingleton(_ => new LiteDatabase(context.Configuration.GetConnectionString("Database")));
     services.AddScoped<IUserRepository, UserRepository>();
     services.AddScoped<IScheduleImportService, ExcelScheduleImportService>();
     services.AddScoped<IScheduleRepository, ScheduleRepository>();
@@ -41,8 +41,8 @@ builder.ConfigureServices((context, services) =>
     services.AddScoped<ICommandRouter, CommandRouter>();
     services.AddScoped<IFileHandlerRouter, FileHandlerRouter>();
     services.AddScoped<IUpdateHandler, AppUpdateHandler>();
-    services.AddSingleton<IMenuDeserializer, MenuDeserializer>();
-    services.AddScoped<IMenuRouter, MenuRouter>();
+    services.AddScoped<MenuFactory>();
+    services.AddScoped<MenuRouter>();
     services.AddHostedService<PollingService>();
     services.AddHostedService<AdminUsersInitService>();
 });
