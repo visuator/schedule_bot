@@ -8,13 +8,13 @@ namespace schedule_bot.Commands;
 
 public record StartCommand(RequestContext Context) : IRequest
 {
-    public class Handler(ITelegramBotClient client, IUserRepository userRepository, MenuFactory factory) : IRequestHandler<StartCommand>
+    public class Handler(ITelegramBotClient client, MenuService menuService, MenuFactory factory) : IRequestHandler<StartCommand>
     {
         public async Task Handle(StartCommand request, CancellationToken token)
         {
             ArgumentNullException.ThrowIfNull(request.Context.Message);
             var menu = factory.CreateStartMenu(request.Context.User.IsAdmin);
-            userRepository.ChangeMenu(request.Context.User.Id, menu);
+            menuService.Update(request.Context.User.Id, menu);
             await client.SendMessage(
                 chatId: request.Context.Message.GetUserId(),
                 text: Resources.GreetingMessage,

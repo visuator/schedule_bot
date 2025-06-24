@@ -11,7 +11,6 @@ public record CreateDefaultUser(long UserId, bool IsAdmin);
 public interface IUserRepository
 {
     User GetOrCreateDefault(CreateDefaultUser dto);
-    void ChangeMenu(long userId, IMenu menu);
 }
 public class UserRepository(LiteDatabase db) : IUserRepository
 {
@@ -46,33 +45,6 @@ public class UserRepository(LiteDatabase db) : IUserRepository
                 }
                 db.Commit();
                 return user;
-            }
-            catch
-            {
-                db.Rollback();
-                throw;
-            }
-        }
-    }
-
-    public void ChangeMenu(long userId, IMenu menu)
-    {
-        if (!db.BeginTrans())
-            throw new Exception();
-        lock (_lock)
-        {
-            try
-            {
-                var user = _users.FindById(userId);
-                //todo: refactor this
-                var snapshots = JsonSerializer.Deserialize<List<MenuSnapshot>>(user.MenuJson, MenuSnapshot.JsonSerializerOptions);
-                ArgumentNullException.ThrowIfNull(snapshots);
-                var dto = menu.CreateSnapshot();
-                snapshots.RemoveAll(x => x.TypeName == dto.TypeName);
-                snapshots.Add(dto);
-                user.MenuJson = JsonSerializer.Serialize(snapshots, MenuSnapshot.JsonSerializerOptions);
-                _users.Update(user);
-                db.Commit();
             }
             catch
             {

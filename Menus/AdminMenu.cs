@@ -2,7 +2,7 @@
 
 namespace schedule_bot.Menus;
 
-public class AdminMenuSnapshot : MenuSnapshot { }
+public class AdminMenuSnapshot : MenuSnapshot;
 public class AdminMenu : ReplyMenu
 {
     public AdminMenu()

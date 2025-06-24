@@ -1,6 +1,6 @@
 ﻿namespace schedule_bot.Menus;
 
-public class StudentMenuSnapshot : MenuSnapshot { }
+public class StudentMenuSnapshot : MenuSnapshot;
 public class StudentMenu : ReplyMenu
 {
     public StudentMenu()
