@@ -33,8 +33,8 @@ builder.ConfigureServices((context, services) =>
     services.Configure<BotConfiguration>(context.Configuration.GetSection(nameof(BotConfiguration)));
     services.AddSingleton(_ => new LiteDatabase(context.Configuration.GetConnectionString("Database")));
     services.AddScoped<IUserRepository, UserRepository>();
-    services.AddScoped<IScheduleImportService, ExcelScheduleImportService>();
     services.AddScoped<IScheduleRepository, ScheduleRepository>();
+    services.AddScoped<IScheduleImportService, ExcelScheduleImportService>();
     services.AddScoped<ReceiverService>();
     services.AddScoped<IMessageRouter, MessageRouter>();
     services.AddScoped<ICallbackQueryRouter, CallbackQueryRouter>();

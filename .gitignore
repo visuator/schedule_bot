@@ -1,7 +1,5 @@
 bin/
 obj/
 /packages/
-riderModule.iml
-/_ReSharper.Caches/
 /common.db
 /common-log.db

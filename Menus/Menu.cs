@@ -61,6 +61,7 @@ public class MenuFactory
         AdminMenuSnapshot adminMenuSnapshot => new AdminMenu(adminMenuSnapshot),
         StudentMenuSnapshot studentMenuSnapshot => new StudentMenu(studentMenuSnapshot),
         DatePickerMenuSnapshot datePickerMenuSnapshot => new DatePickerMenu(datePickerMenuSnapshot),
+        SubjectMenuSnapshot subjectMenuSnapshot => new SubjectMenu(subjectMenuSnapshot),
         _ => throw new ArgumentOutOfRangeException(snapshot.GetType().Name)
     };
     public StartMenu CreateStartMenu(bool isAdmin) => new(isAdmin, this);
@@ -68,6 +69,7 @@ public class MenuFactory
     public StudentMenu CreateStudentMenu() => new();
     public AdminMenu CreateAdminMenu() => new();
     public TestComposeMenu CreateTestComposeMenu(DateTime from, DateTime to) => new(from, to, this);
+    public SubjectMenu CreateSubjectMenu(IEnumerable<string> subjects) => new(subjects);
 }
 public abstract class MenuSnapshot
 {
