@@ -3,3 +3,5 @@ obj/
 /packages/
 /common.db
 /common-log.db
+
+.vscode/
