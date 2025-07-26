@@ -1,20 +1,19 @@
-﻿namespace schedule_bot.Menus;
+﻿using schedule_bot.Menus.Abstract;
+using schedule_bot.Menus.Impl;
 
-public class StartMenuSnapshot : MenuSnapshot
-{
-    public bool IsAdmin { get; set; }
-}
+namespace schedule_bot.Menus;
+
 public class StartMenu : ReplyMenu
 {
-    private readonly bool _isAdmin;
-    public StartMenu(bool isAdmin, MenuFactory factory)
+    public bool IsAdmin { get; }
+
+    public StartMenu(MenuFactory factory, bool isAdmin)
     {
-        _isAdmin = isAdmin;
+        IsAdmin = isAdmin;
+
         Append(factory.CreateStudentMenu());
-        if (_isAdmin)
+        if (isAdmin)
             Append(factory.CreateAdminMenu());
     }
-    public StartMenu(StartMenuSnapshot snapshot, MenuFactory factory) : this(snapshot.IsAdmin, factory) { }
-    public override MenuSnapshot CreateSnapshot() => new StartMenuSnapshot() { IsAdmin = _isAdmin };
 }
 

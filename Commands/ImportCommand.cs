@@ -8,11 +8,11 @@ using Telegram.Bot.Types;
 
 namespace schedule_bot.Commands;
 
-public record ImportCommand(RequestContext Context) : IRequest
+public record ImportScheduleCommand(RequestContext Context) : IRequest
 {
-    public class Handler(ITelegramBotClient client, IScheduleImportService importService) : IRequestHandler<ImportCommand>
+    public class Handler(ITelegramBotClient client, IScheduleImportService importService) : IRequestHandler<ImportScheduleCommand>
     {
-        public async Task Handle(ImportCommand request, CancellationToken token)
+        public async Task Handle(ImportScheduleCommand request, CancellationToken token)
         {
             ArgumentNullException.ThrowIfNull(request.Context.Message);
             if (!request.Context.User.IsAdmin)
@@ -24,9 +24,9 @@ public record ImportCommand(RequestContext Context) : IRequest
         }
     }
 }
-public class ExportCommandExceptionHandler(ITelegramBotClient client) : IRequestExceptionAction<ImportCommand, UserIsNotAdminException>
+public class ExportCommandExceptionHandler(ITelegramBotClient client) : IRequestExceptionAction<ImportScheduleCommand, UserIsNotAdminException>
 {
-    public async Task Execute(ImportCommand request, UserIsNotAdminException exception, CancellationToken token)
+    public async Task Execute(ImportScheduleCommand request, UserIsNotAdminException exception, CancellationToken token)
     {
         await client.SendMessage(
             chatId: exception.UserId,

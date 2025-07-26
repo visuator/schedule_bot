@@ -1,5 +1,5 @@
 ﻿using MediatR;
-using schedule_bot.Menus;
+using schedule_bot.Menus.Impl;
 using schedule_bot.Services;
 using Telegram.Bot;
 
@@ -17,7 +17,7 @@ public record AddTaskCommand(RequestContext Context) : IRequest
             await client.SendMessage(
                 chatId: request.Context.Message.Chat.Id,
                 text: "",
-                replyMarkup: menu.CreateMarkup(),
+                replyMarkup: menu.ToMarkup(),
                 cancellationToken: cancellationToken
             );
         }

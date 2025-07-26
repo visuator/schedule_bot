@@ -1,17 +1,24 @@
 ﻿using schedule_bot.Commands;
+using schedule_bot.Menus.Abstract;
 
 namespace schedule_bot.Menus;
 
-public class AdminMenuSnapshot : MenuSnapshot;
 public class AdminMenu : ReplyMenu
 {
     public AdminMenu()
     {
-        Append(Resources.AddVacation);
-        Append(Resources.ImportSchedule);
-        Routes[Resources.AddVacation] = context => new AddVacationCommand(context);
-        Routes[Resources.ImportSchedule] = context => new ImportCommand(context);
+        HasRow(row =>
+        {
+            row.HasMediatRButton(button =>
+            {
+                button.WithText(Resources.AddVacation);
+                button.Routes(context => new AddVacationCommand(context));
+            });
+            row.HasMediatRButton(button =>
+            {
+                button.WithText(Resources.ImportSchedule);
+                button.Routes(context => new ImportScheduleCommand(context));
+            });
+        });
     }
-    public AdminMenu(AdminMenuSnapshot snapshot) : this() { }
-    public override MenuSnapshot CreateSnapshot() => new AdminMenuSnapshot();
 }

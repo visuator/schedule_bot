@@ -30,7 +30,6 @@ public class AppUpdateHandler(IMessageRouter messageRouter, ICallbackQueryRouter
             default:
                 return Task.CompletedTask;
         }
-        return Task.CompletedTask;
     }
 
     public Task HandleErrorAsync(

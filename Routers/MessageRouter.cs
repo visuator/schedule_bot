@@ -1,6 +1,6 @@
 ﻿using schedule_bot.Commands;
 using schedule_bot.Extensions;
-using schedule_bot.Menus;
+using schedule_bot.Menus.Impl;
 using schedule_bot.Services;
 using Telegram.Bot.Types;
 
@@ -14,8 +14,9 @@ public class MessageRouter(
     ICommandRouter commandRouter,
     IFileHandlerRouter fileHandlerRouter,
     IUserRepository userRepository,
-    MenuService service
-    ) : IMessageRouter
+    MediatRMenuRouter menuRouter,
+    MenuStorage storage
+) : IMessageRouter
 {
     public Task HandleMessage(Message message)
     {
@@ -34,6 +35,6 @@ public class MessageRouter(
         {
             return fileHandlerRouter.HandleFile(context);
         }
-        return service.Route(context);
+        return menuRouter.Route(storage.GetAll(user.Id), context);
     }
 }

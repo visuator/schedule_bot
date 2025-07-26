@@ -1,16 +1,14 @@
-﻿using System.Text.Json;
-using System.Text.Json.Serialization;
-using LiteDB;
+﻿using LiteDB;
 using schedule_bot.Entities;
-using schedule_bot.Menus;
-using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace schedule_bot.Services;
 
 public record CreateDefaultUser(long UserId, bool IsAdmin);
+public record UpsertUser(long UserId, string? MenuJsonString);
 public interface IUserRepository
 {
     User GetOrCreateDefault(CreateDefaultUser dto);
+    void Upsert(UpsertUser dto);
 }
 public class UserRepository(LiteDatabase db) : IUserRepository
 {
@@ -39,12 +37,34 @@ public class UserRepository(LiteDatabase db) : IUserRepository
                             DeadlineEnabled = true
                         },
                         Tasks = [],
-                        MenuJson = "[]"
+                        MenuString = "[]"
                     };
                     _users.Insert(user);
                 }
                 db.Commit();
                 return user;
+            }
+            catch
+            {
+                db.Rollback();
+                throw;
+            }
+        }
+    }
+
+    public void Upsert(UpsertUser dto)
+    {
+        if (!db.BeginTrans())
+            throw new Exception();
+        lock (_lock)
+        {
+            try
+            {
+                var user = _users.FindById(dto.UserId);
+                if (dto.MenuJsonString is not null)
+                    user.MenuString = dto.MenuJsonString;
+                _users.Update(user);
+                db.Commit();
             }
             catch
             {

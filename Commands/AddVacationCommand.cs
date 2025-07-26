@@ -1,23 +1,24 @@
 ﻿using MediatR;
 using schedule_bot.Extensions;
-using schedule_bot.Menus;
+using schedule_bot.Menus.Impl;
 using Telegram.Bot;
 
 namespace schedule_bot.Commands;
 
 public record AddVacationCommand(RequestContext Context) : IRequest
 {
-    public class Handler(ITelegramBotClient client, MenuFactory factory, MenuService menuService) : IRequestHandler<AddVacationCommand>
+    public class Handler(ITelegramBotClient client, MenuStorage storage, MenuFactory factory) : IRequestHandler<AddVacationCommand>
     {
         public async Task Handle(AddVacationCommand request, CancellationToken token)
         {
             ArgumentNullException.ThrowIfNull(request.Context.Message);
-            var menu = factory.CreateTestComposeMenu(DateTime.Today, DateTime.Today.AddDays(1));
-            menuService.Update(request.Context.User.Id, menu);
+            var menu = factory.CreateDatePickerMenu(request.Context.Message.Date);
+            //todo: use message id instead of replacement
+            storage.Switch(request.Context.User.Id, menu);
             await client.SendMessage(
                 chatId: request.Context.Message.GetUserId(),
-                text: "Выбери начальную дату",
-                replyMarkup: menu.CreateMarkup(),
+                text: Resources.SelectDate,
+                replyMarkup: menu.ToMarkup(),
                 cancellationToken: token
             );
         }

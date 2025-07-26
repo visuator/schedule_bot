@@ -1,6 +1,6 @@
 ﻿using schedule_bot.Commands;
 using schedule_bot.Extensions;
-using schedule_bot.Menus;
+using schedule_bot.Menus.Impl;
 using schedule_bot.Services;
 using Telegram.Bot.Types;
 
@@ -12,7 +12,8 @@ public interface ICallbackQueryRouter
 }
 public class CallbackQueryRouter(
     IUserRepository userRepository,
-    MenuService service
+    MediatRMenuRouter menuRouter,
+    MenuStorage storage
     ) : ICallbackQueryRouter
 {
     public Task HandleCallbackQuery(CallbackQuery callbackQuery)
@@ -25,6 +26,6 @@ public class CallbackQueryRouter(
             Message = null,
             CallbackQuery = callbackQuery
         };
-        return service.Route(context);
+        return menuRouter.Route(storage.GetAll(user.Id), context);
     }
 }

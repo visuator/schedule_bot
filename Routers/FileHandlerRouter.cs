@@ -15,7 +15,7 @@ public class FileHandlerRouter(IMediator mediator) : IFileHandlerRouter
         switch (Path.GetExtension(context.Message.Document.FileName))
         {
             case ".xlsx":
-                await mediator.Send(new ImportCommand(context));
+                await mediator.Send(new ImportScheduleCommand(context));
                 break;
         }
     }
