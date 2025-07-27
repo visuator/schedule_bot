@@ -171,4 +171,7 @@
   <data name="SelectDate" xml:space="preserve">
     <value>Выбери день</value>
   </data>
+  <data name="AddVacationSuccess" xml:space="preserve">
+    <value>Выходные дни добавлены успешно</value>
+  </data>
 </root>

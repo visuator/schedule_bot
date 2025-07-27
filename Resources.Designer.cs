@@ -78,6 +78,15 @@ namespace schedule_bot {
         /// <summary>
         ///   Looks up a localized string similar to &lt;empty&gt;.
         /// </summary>
+        internal static string AddVacationSuccess {
+            get {
+                return ResourceManager.GetString("AddVacationSuccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;empty&gt;.
+        /// </summary>
         internal static string EnterSubjectName {
             get {
                 return ResourceManager.GetString("EnterSubjectName", resourceCulture);

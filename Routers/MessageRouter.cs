@@ -1,4 +1,5 @@
-﻿using schedule_bot.Commands;
+﻿using Microsoft.Extensions.Caching.Memory;
+using schedule_bot.Commands;
 using schedule_bot.Extensions;
 using schedule_bot.Menus.Impl;
 using schedule_bot.Services;
@@ -11,6 +12,7 @@ public interface IMessageRouter
     Task HandleMessage(Message message);
 }
 public class MessageRouter(
+    IMemoryCache cache,
     ICommandRouter commandRouter,
     IFileHandlerRouter fileHandlerRouter,
     IUserRepository userRepository,
@@ -25,7 +27,8 @@ public class MessageRouter(
         {
             User = user,
             Message = message,
-            CallbackQuery = null
+            CallbackQuery = null,
+            CurrentState = cache.Get<string>($"{user.Id}-current_state"),
         };
         if (message.IsCommand())
         {

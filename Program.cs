@@ -46,8 +46,11 @@ builder.ConfigureServices((context, services) =>
     services.AddScoped<MenuStorage>();
     services.AddScoped<IMenuSerializer, JsonMenuSerializer>();
     services.AddScoped<MediatRMenuRouter>();
+    services.AddScoped<IVacationService, VacationService>();
     services.AddHostedService<PollingService>();
     services.AddHostedService<AdminUsersInitService>();
+
+    services.AddMemoryCache();
 });
 
 await builder.Build().RunAsync();

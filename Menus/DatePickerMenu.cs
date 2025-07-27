@@ -11,13 +11,9 @@ public class DatePickerMenu : InlineMenu
     {
         Date = date;
 
-        var day = date.Day;
-        var daysInMonth = DateTime.DaysInMonth(date.Year, date.Month);
-
-        
-        Rows.AddRange(Enumerable.Range(day, daysInMonth - day)
-            .Select(x => $"{x}")
-            .Select(x => new MediatRInlineMenuButton(x, x, context => new DatePickerCommand(context)))
+        Rows.AddRange(Enumerable.Range(0, Math.Max(DateTime.DaysInMonth(date.Year, date.Month), DateTime.DaysInMonth(date.Year, date.Month + 1)))
+            .Select(x => date.AddDays(x))
+            .Select(x => new MediatRInlineMenuButton($"{x.Day}", $"{x.Day}", context => new DatePickerCommand(x, context)))
             .Chunk(3)
         );
     }

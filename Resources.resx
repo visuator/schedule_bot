@@ -159,4 +159,7 @@
   <data name="SelectDate" xml:space="preserve">
     <value>&lt;empty&gt;</value>
   </data>
+  <data name="AddVacationSuccess" xml:space="preserve">
+    <value>&lt;empty&gt;</value>
+  </data>
 </root>
