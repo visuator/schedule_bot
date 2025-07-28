@@ -3,11 +3,11 @@ using schedule_bot.Entities;
 
 namespace schedule_bot.Services;
 
-public interface IScheduleImportService
+public interface IImportScheduleService
 {
     void Import(Stream stream, DateTime uploadDate);
 }
-public class ExcelScheduleImportService(IScheduleRepository scheduleRepository) : IScheduleImportService
+public class ExcelScheduleImportService(IScheduleRepository scheduleRepository) : IImportScheduleService
 {
     public void Import(Stream stream, DateTime uploadDate)
     {

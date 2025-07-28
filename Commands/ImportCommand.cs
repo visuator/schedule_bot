@@ -4,13 +4,12 @@ using schedule_bot.Common;
 using schedule_bot.Extensions;
 using schedule_bot.Services;
 using Telegram.Bot;
-using Telegram.Bot.Types;
 
 namespace schedule_bot.Commands;
 
 public record ImportScheduleCommand(RequestContext Context) : IRequest
 {
-    public class Handler(ITelegramBotClient client, IScheduleImportService importService) : IRequestHandler<ImportScheduleCommand>
+    public class Handler(ITelegramBotClient client, IImportScheduleService importService) : IRequestHandler<ImportScheduleCommand>
     {
         public async Task Handle(ImportScheduleCommand request, CancellationToken token)
         {

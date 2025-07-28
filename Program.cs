@@ -35,7 +35,7 @@ builder.ConfigureServices((context, services) =>
     services.AddSingleton(_ => new LiteDatabase(context.Configuration.GetConnectionString("Database")));
     services.AddScoped<IUserRepository, UserRepository>();
     services.AddScoped<IScheduleRepository, ScheduleRepository>();
-    services.AddScoped<IScheduleImportService, ExcelScheduleImportService>();
+    services.AddScoped<IImportScheduleService, ExcelScheduleImportService>();
     services.AddScoped<ReceiverService>();
     services.AddScoped<IMessageRouter, MessageRouter>();
     services.AddScoped<ICallbackQueryRouter, CallbackQueryRouter>();
