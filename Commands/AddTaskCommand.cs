@@ -16,7 +16,7 @@ public record AddTaskCommand(RequestContext Context) : IRequest
             var menu = factory.CreateSubjectMenu(subjects);
             await client.SendMessage(
                 chatId: request.Context.Message.Chat.Id,
-                text: "",
+                text: Resources.SelectSubject,
                 replyMarkup: menu.ToMarkup(),
                 cancellationToken: cancellationToken
             );

@@ -174,4 +174,7 @@
   <data name="AddVacationSuccess" xml:space="preserve">
     <value>Выходные дни добавлены успешно</value>
   </data>
+  <data name="SelectSubject" xml:space="preserve">
+    <value>Выбери предмет</value>
+  </data>
 </root>

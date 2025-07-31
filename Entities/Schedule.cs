@@ -9,6 +9,7 @@ public class Schedule
 }
 public class ScheduleItem
 {
+    public DayOfWeek DayOfWeek { get; set; }
     public string SubjectName { get; set; } = default!;
     public string LecturerName { get; set; } = default!;
     public string Location { get; set; } = default!;

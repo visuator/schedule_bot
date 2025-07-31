@@ -132,6 +132,15 @@ namespace schedule_bot {
         /// <summary>
         ///   Looks up a localized string similar to &lt;empty&gt;.
         /// </summary>
+        internal static string SelectSubject {
+            get {
+                return ResourceManager.GetString("SelectSubject", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;empty&gt;.
+        /// </summary>
         internal static string SetupNotifications {
             get {
                 return ResourceManager.GetString("SetupNotifications", resourceCulture);

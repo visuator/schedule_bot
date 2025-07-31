@@ -162,4 +162,7 @@
   <data name="AddVacationSuccess" xml:space="preserve">
     <value>&lt;empty&gt;</value>
   </data>
+  <data name="SelectSubject" xml:space="preserve">
+    <value>&lt;empty&gt;</value>
+  </data>
 </root>

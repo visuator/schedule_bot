@@ -50,4 +50,4 @@ for i in range(2, int(args.rows_count) + 1):
     write_cell(target, i, 6, fake.random_number(digits=3))
     write_cell(target, i, 7, fake.random_element(TIMES))
 
-workbook.save(filename=f"gen/{args.output}.xlsx")
+workbook.save(filename=f"{args.output}.xlsx")

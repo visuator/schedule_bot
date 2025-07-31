@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using System.Text;
 using LiteDB;
 using Microsoft.Extensions.Options;
 using schedule_bot.Configuration;
@@ -51,6 +52,8 @@ builder.ConfigureServices((context, services) =>
     services.AddHostedService<AdminUsersInitService>();
 
     services.AddMemoryCache();
+
+    Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 });
 
 await builder.Build().RunAsync();
